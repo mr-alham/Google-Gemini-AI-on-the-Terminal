@@ -1,0 +1,19 @@
+---
+name: Check Code Quality
+
+on:
+  push:
+    branches: main
+  pull_request:
+    branches: main
+
+permissions: read-all
+
+jobs:
+  Super-Linter:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout The Repository
+        uses: actions/checkout@v4 # complete the file
+...
