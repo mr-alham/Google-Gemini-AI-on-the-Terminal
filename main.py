@@ -1,11 +1,14 @@
 #!/bin/env python3
 """This script is to chat with Google Gemini AI"""
 
-import google.generativeai as genai
-from json import load, JSONDecodeError
-import PIL.Image
-from sys import exit, argv
+
+from json import JSONDecodeError, load
 from os import path
+from sys import argv, exit
+
+import google.generativeai as genai
+import PIL.Image
+
 
 def initialize_genai():
     """Initialize the generative AI module and configuring it."""
@@ -14,23 +17,22 @@ def initialize_genai():
         script_dir = path.dirname(path.realpath(__file__))
         file = path.join(script_dir, "keys.json")
 
-        with open(file, "r") as f:
+        with open(file, "r", encoding="utf-8") as f:
             content = load(f)
-            GEMINI_API_KEY = content["GEMINI_API_KEY"]
-            GEMINI_MODEL = content["GEMINI_MODEL"]
-            SAFETY_SETTINGS = content["SAFETY_SETTINGS"]
-            GENERATION_CONFIG = content["GENERATION_CONFIG"]
+            gemini_api_key = content["GEMINI_API_KEY"]
+            gemini_model = content["GEMINI_MODEL"]
+            safety_settings = content["SAFETY_SETTINGS"]
+            generation_config = content["GENERATION_CONFIG"]
 
-            genai.configure(api_key=GEMINI_API_KEY)
+            genai.configure(api_key=gemini_api_key)
 
     except FileNotFoundError:
-        print("Could not find the configuration file \'keys.json\', Ensure it exists")
+        print("Could not find the configuration file 'keys.json', Ensure it exists")
 
         exit(1)
 
     except JSONDecodeError:
-        print(
-            "Error: Could not parse the key file 'keys.json'. Please check the file format.")
+        print("Error: Could not parse the key file 'keys.json'. Please check the file format.")
 
         exit(1)
 
@@ -45,9 +47,9 @@ def initialize_genai():
         exit(1)
 
     model = genai.GenerativeModel(
-        model_name=GEMINI_MODEL,
-        safety_settings=SAFETY_SETTINGS,
-        generation_config=GENERATION_CONFIG
+        model_name=gemini_model,
+        safety_settings=safety_settings,
+        generation_config=generation_config,
     )  # TOOLS, TOOL_CONFIG, SYSTEM_INSTRUCTIONS
 
     return model
@@ -63,7 +65,9 @@ def response_with_images():
             query = input("Query: ")
             model = initialize_genai()
 
-            response = model.generate_content([query, PIL.Image.open(image_file)], stream=False)
+            response = model.generate_content(
+                [query, PIL.Image.open(image_file)], stream=False
+            )
 
             print(response.text)
 
@@ -90,14 +94,16 @@ def main():
     chat = model.start_chat(history=[])
 
     while True:
-        q = input('what do you need to ask: ')
+        query = input("what do you need to ask: ")
 
         try:
-            response = chat.send_message(q, stream=False)
+            response = chat.send_message(query, stream=False)
             print(response.text)
 
         except genai.RequestError as e:
-            print(f"Error: An error occurred while communicating with the Gemini API. ({e})")
+            print(
+                f"Error: An error occurred while communicating with the Gemini API. ({e})"
+            )
 
         except ValueError:
             print(response.prompt_feedback)
@@ -109,8 +115,8 @@ def main():
         print("\n")
 
     # for chunk in response:
-        # print(chunk.text)
+    # print(chunk.text)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
