@@ -8,6 +8,7 @@ from sys import argv, exit
 
 import google.generativeai as genai
 import PIL.Image
+from pyperclip import paste
 
 
 def initialize_genai():
@@ -20,6 +21,15 @@ def initialize_genai():
         with open(file, "r", encoding="utf-8") as f:
             content = load(f)
             gemini_api_key = content["GEMINI_API_KEY"]
+
+            if gemini_api_key == "your gemini api key here":
+                print("To use the Gemini API, you'll need an API key.")
+                print("If you don't already have one,")
+                print("create a key in Google AI Studio.'https://aistudio.google.com/app/apikey'")
+                print("save the key to 'keys.json' file.")
+
+                exit(1)
+
             gemini_model = content["GEMINI_MODEL"]
             safety_settings = content["SAFETY_SETTINGS"]
             generation_config = content["GENERATION_CONFIG"]
@@ -32,7 +42,9 @@ def initialize_genai():
         exit(1)
 
     except JSONDecodeError:
-        print("Error: Could not parse the key file 'keys.json'. Please check the file format.")
+        print(
+            "Error: Could not parse the key file 'keys.json'. Please check the file format."
+        )
 
         exit(1)
 
@@ -59,7 +71,10 @@ def response_with_images():
     """when need a response with a image"""
 
     while True:
-        image_file = input("The path to the image: ")
+        image_file = input("The path to the image ('clip' to copy from the clipboard or press 'enter' key): ")
+
+        if image_file == "clip" or image_file == "":
+            image_file = paste()
 
         if path.exists(image_file):
             query = input("Query: ")
