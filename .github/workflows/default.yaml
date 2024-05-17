@@ -15,5 +15,11 @@ jobs:
 
     steps:
       - name: Checkout The Repository
-        uses: actions/checkout@v4 # complete the file
+        uses: actions/checkout@v4
+
+      - name: Install and Run Super-Linter
+        uses: github/super-linter@v6
+        env:
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ...

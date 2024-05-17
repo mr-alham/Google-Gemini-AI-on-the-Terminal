@@ -1,0 +1,2 @@
+google-generativeai==0.5.3
+pillow==10.3.0
