@@ -48,20 +48,18 @@ def format_text(text: str) -> str:
             [ansi(["blue", "underline", "italic"]), ansi(["reset", "white"])],
     }
 
-    for pattern in other_patterns.keys():
-        matches = re.finditer(pattern, text, re.MULTILINE)
+    for key, value in other_patterns.items():
+        matches = re.finditer(key, text, re.MULTILINE)
 
         for match in matches:
-            formatted_text = other_patterns[pattern][0] + \
-                match.group(0) + other_patterns[pattern][1]
+            formatted_text = value[0] + match.group(0) + value[1]
             text = text.replace(match.group(0), formatted_text)
 
-    for pattern in patterns.keys():
-        matches = re.finditer(pattern, text, re.MULTILINE)
+    for key, value in patterns.items():
+        matches = re.finditer(key, text, re.MULTILINE)
 
         for match in matches:
-            formatted_text = patterns[pattern][0] + \
-                match.group("content") + patterns[pattern][1]
+            formatted_text = value[0] + match.group("content") + value[1]
             text = text.replace(match.group(0), formatted_text)
 
     return text
