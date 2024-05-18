@@ -14,6 +14,7 @@ from colors import ansi
 
 
 def format_text(text: str) -> str:
+    """format the markdown formatted file with ansi codes"""
     patterns = {
         # code
         r"```(?P<content>.*?)```": [ansi(["black_bg"]), ansi(["white"])],
@@ -21,7 +22,7 @@ def format_text(text: str) -> str:
         r"\*\*\*(?P<content>.*?)\*\*\*": [ansi(["bold", "italic"]), ansi(["white"])],
         # bold
         r"\*\*(?P<content>.*?)\*\*": [ansi(["bold", "yellow"]), ansi(["white"])],
-         # italic
+        # italic
         r"\*(?P<content>.*?)\*": [ansi(["italic", "cyan"]), ansi(["white"])],
         # code
         r"\`(?P<content>.*?)\`": [ansi(["dim", "bright_green"]), ansi(["white"])],
@@ -43,10 +44,11 @@ def format_text(text: str) -> str:
         # digits  *something is going wrong with the digits
         # r"\b(\d+)\b": [ansi(["yellow"]),ansi(["reset", "yellow","white"])],
         # url
-        r"(https?://\S+|www\.\S+)": [ansi(["blue", "underline", "italic"]), ansi(["reset", "white"])],
+        r"(https?://\S+|www\.\S+)":
+            [ansi(["blue", "underline", "italic"]), ansi(["reset", "white"])],
     }
 
-    for pattern in other_patterns:
+    for pattern in other_patterns.keys():
         matches = re.finditer(pattern, text, re.MULTILINE)
 
         for match in matches:
@@ -54,7 +56,7 @@ def format_text(text: str) -> str:
                 match.group(0) + other_patterns[pattern][1]
             text = text.replace(match.group(0), formatted_text)
 
-    for pattern in patterns:
+    for pattern in patterns.keys():
         matches = re.finditer(pattern, text, re.MULTILINE)
 
         for match in matches:
@@ -125,7 +127,8 @@ def text_to_text():
     """Input: text  ->  output: text"""
 
     print(ansi(["dim", "bright_yellow", "bold"]),
-          "You are using Text-to-Text(T2T) Model.\n Enter 'Image Mode' to turn to Image/text Model", ansi([]))
+          "You are using Text-to-Text(T2T) Model.\
+            \n Enter 'Image Mode' to turn to Image/text Model", ansi([]))
 
     model = initialize_genai()
 
@@ -161,11 +164,16 @@ def response_with_images():
     """Input: text/image  ->  output: text"""
 
     print(ansi(["dim", "bright_yellow", "bold"]),
-          "You are using MultiModel Model.\n WEnter 'Text Mode' to turn to Text-to-Text Model", ansi([]))
+          "You are using MultiModel Model.\
+            \n WEnter 'Text Mode' to turn to Text-to-Text Model", ansi([])
+          )
 
     while True:
-        print(ansi(["green", "bold"]) + "The path to the image " + ansi(["green", "bold", "dim"]) +
-              "(Enter 'clip' or press 'enter' key to copy from the Clipboard): " + ansi(["white"]), end='')
+        print(ansi(["green", "bold"]) + "The path to the image " +
+              ansi(["green", "bold", "dim"]) +
+              "(Enter 'clip' or press 'enter' key to copy from the Clipboard): " +
+              ansi(["white"]), end=''
+              )
         image_file = input()
 
         if image_file == "Text Mode":
@@ -182,7 +190,8 @@ def response_with_images():
             model = initialize_genai()
 
             response = model.generate_content(
-                [query, PIL.Image.open(image_file)], stream=False
+                [query, PIL.Image.open(image_file)],
+                stream=False
             )
 
             print(format_text(response.text), ansi([]))
@@ -190,7 +199,7 @@ def response_with_images():
         else:
             print(f"{ansi(["bold", "red"])}Error: Not a valid file path:{
                   ansi(["dim", "bright_red"])}'{image_file}'."
-            )
+                  )
             print("Try again.\n")
 
             continue
@@ -224,19 +233,20 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
 
-        text = ansi(["bold", "bright_red"]) + "___ See ya! ___" + ansi(["bold", "bright_white"])
+        string = ansi(["bold", "bright_red"]) + \
+            "___ See ya! ___" + ansi(["bold", "bright_white"])
 
-        print(f"{text:^{os.get_terminal_size().columns - 6}}")
+        print(f"{string:^{os.get_terminal_size().columns - 6}}")
 
-        space = int((os.get_terminal_size().columns/2) - 12)
+        s = int((os.get_terminal_size().columns/2) - 12)
 
-        print(" " * space + r"     .--.  ")
-        print(" " * space + r"    |o_o |  ")
-        print(" " * space + r"    |:_/ |  ")
-        print(" " * space + r"   //   \ \  ")
-        print(" " * space + r"  (|     | )  ")
-        print(" " * space + r" /'\_   _/`\  ")
-        print(" " * space + r" \___)=(___/  ")
+        print(" " * s + r"     .--.  ")
+        print(" " * s + r"    |o_o |  ")
+        print(" " * s + r"    |:_/ |  ")
+        print(" " * s + r"   //   \ \  ")
+        print(" " * s + r"  (|     | )  ")
+        print(" " * s + r" /'\_   _/`\  ")
+        print(" " * s + r" \___)=(___/  ")
 
         print(ansi([]))
 
