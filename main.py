@@ -4,8 +4,8 @@
 
 import json
 import os
-import sys
 import re
+import sys
 
 import google.generativeai as genai
 import PIL.Image
@@ -15,22 +15,35 @@ from colors import ansi
 
 def format_text(text: str) -> str:
     patterns = {
-        r"```(?P<content>.*?)```": [ansi(["black_bg"]), ansi(["white"])],  # code
-        r"\*\*\*(?P<content>.*?)\*\*\*": [ansi(["bold", "italic"]), ansi(["white"])],  # bold_italic
-        r"\*\*(?P<content>.*?)\*\*": [ansi(["bold", "yellow"]), ansi(["white"])],  # bold
-        r"\*(?P<content>.*?)\*": [ansi(["italic", "cyan"]), ansi(["white"])],  # italic
-        r"\`(?P<content>.*?)\`": [ansi(["dim", "bright_green"]), ansi(["white"])],  # code
-        r"^\>.?(?P<content>.*)": [ansi(["bright_black", "white_bg"]), ansi(["white"])],  # blockquote
-        r"^#{1,6}(?P<content>.*)": [ansi(["dim", "bold", "underline", "magenta"]), ansi(["white"])],  # headings
-        # r"#{1,6}(?P<content>.*)": [ansi(["red"]), ansi(["reset", "white"])],  # headings
-        r"^\>(?P<content>.*?)": [ansi(["black"]), ansi(["white_bg", "reset"])],  # blockquote
-        r"^\* (?P<content>.*?)": ["\u2022", ""],  # un ordered lists
-        r"\~\~(?P<content>.*?)\~\~": [ansi(["strikethrough"]), ansi(["white"])],  # strikethrough
+        # code
+        r"```(?P<content>.*?)```": [ansi(["black_bg"]), ansi(["white"])],
+        # bold_italic
+        r"\*\*\*(?P<content>.*?)\*\*\*": [ansi(["bold", "italic"]), ansi(["white"])],
+        # bold
+        r"\*\*(?P<content>.*?)\*\*": [ansi(["bold", "yellow"]), ansi(["white"])],
+         # italic
+        r"\*(?P<content>.*?)\*": [ansi(["italic", "cyan"]), ansi(["white"])],
+        # code
+        r"\`(?P<content>.*?)\`": [ansi(["dim", "bright_green"]), ansi(["white"])],
+        # blockquote
+        r"^\>.?(?P<content>.*)": [ansi(["bright_black", "white_bg"]), ansi(["white"])],
+        # headings
+        r"^#{1,6}(?P<content>.*)": [ansi(["dim", "bold", "underline", "magenta"]), ansi(["white"])],
+        # headings
+        # r"#{1,6}(?P<content>.*)": [ansi(["red"]), ansi(["reset", "white"])],
+        # blockquote
+        r"^\>(?P<content>.*?)": [ansi(["black"]), ansi(["white_bg", "reset"])],
+        # un ordered lists
+        r"^\* (?P<content>.*?)": ["\u2022", ""],
+        # strikethrough
+        r"\~\~(?P<content>.*?)\~\~": [ansi(["strikethrough"]), ansi(["white"])],
     }
 
     other_patterns = {
-        # r"\b(\d+)\b": [ansi(["yellow"]),ansi(["reset", "yellow","white"])],  # digits  *something is going wrong with the digits
-        r"(https?://\S+|www\.\S+)": [ansi(["blue", "underline", "italic"]), ansi(["reset", "white"])],  # url
+        # digits  *something is going wrong with the digits
+        # r"\b(\d+)\b": [ansi(["yellow"]),ansi(["reset", "yellow","white"])],
+        # url
+        r"(https?://\S+|www\.\S+)": [ansi(["blue", "underline", "italic"]), ansi(["reset", "white"])],
     }
 
     for pattern in other_patterns:
@@ -66,7 +79,8 @@ def initialize_genai():
             if gemini_api_key == "your gemini api key here":
                 print("To use the Gemini API, you'll need an API key.")
                 print("If you don't already have one,")
-                print("create a key in Google AI Studio.'https://aistudio.google.com/app/apikey'")
+                print(
+                    "create a key in Google AI Studio.'https://aistudio.google.com/app/apikey'")
                 print("save the key to 'keys.json' file.")
 
                 sys.exit(1)
@@ -83,7 +97,8 @@ def initialize_genai():
         sys.exit(1)
 
     except json.JSONDecodeError:
-        print("Error: Could not parse the key file 'keys.json'. Please check the file format.")
+        print(
+            "Error: Could not parse the key file 'keys.json'. Please check the file format.")
 
         sys.exit(1)
 
@@ -173,7 +188,7 @@ def response_with_images():
             print(format_text(response.text), ansi([]))
 
         else:
-            print(f"{ansi(["bold", "red"])}Error: Not a valid file path: {
+            print(f"{ansi(["bold", "red"])}Error: Not a valid file path:{
                   ansi(["dim", "bright_red"])}'{image_file}'."
             )
             print("Try again.\n")
@@ -209,7 +224,7 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
 
-        text = ansi(["bold", "bright_red"]) + "___ See ya! ___" + ansi(["bold","bright_white"])
+        text = ansi(["bold", "bright_red"]) + "___ See ya! ___" + ansi(["bold", "bright_white"])
 
         print(f"{text:^{os.get_terminal_size().columns - 6}}")
 
@@ -226,4 +241,3 @@ if __name__ == "__main__":
         print(ansi([]))
 
         sys.exit(0)
-

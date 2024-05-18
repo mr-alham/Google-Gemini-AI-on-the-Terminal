@@ -2,7 +2,7 @@
 """ansi color codes"""
 
 
-def ansi(colors: list[str]) -> str:
+def ansi(color_list: list[str]) -> str:
     """Returns a string of ansi color codes"""
 
     tags = {
@@ -15,8 +15,7 @@ def ansi(colors: list[str]) -> str:
         "inverse": "\033[7m",
         "hide": "\033[8m",
         "strikethrough": "\033[9m",
-
-        "black": "\033[30m",
+        "black": "\033[30m",  # colors
         "red": "\033[31m",
         "green": "\033[32m",
         "yellow": "\033[33m",
@@ -24,8 +23,7 @@ def ansi(colors: list[str]) -> str:
         "magenta": "\033[35m",
         "cyan": "\033[36m",
         "white": "\033[37m",
-
-        "bright_black": "\033[90m",
+        "bright_black": "\033[90m",  # bright colors
         "bright_red": "\033[91m",
         "bright_green": "\033[92m",
         "bright_yellow": "\033[93m",
@@ -33,8 +31,7 @@ def ansi(colors: list[str]) -> str:
         "bright_magenta": "\033[95m",
         "bright_cyan": "\033[96m",
         "bright_white": "\033[97m",
-
-        "black_bg": "\033[40m",
+        "black_bg": "\033[40m",  # background colors
         "red_bg": "\033[41m",
         "green_bg": "\033[42m",
         "yellow_bg": "\033[43m",
@@ -42,8 +39,7 @@ def ansi(colors: list[str]) -> str:
         "magenta_bg": "\033[45m",
         "cyan_bg": "\033[46m",
         "white_bg": "\033[47m",
-
-        "black_bright_bg": "\033[100m",
+        "black_bright_bg": "\033[100m",  # bright background colors
         "red_bright_bg": "\033[101m",
         "green_bright_bg": "\033[102m",
         "yellow_bright_bg": "\033[103m",
@@ -55,7 +51,7 @@ def ansi(colors: list[str]) -> str:
 
     string = tags["reset"]
 
-    for color in colors:
+    for color in color_list:
         try:
             string += tags[color]
         except KeyError:
