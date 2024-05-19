@@ -128,7 +128,7 @@ def text_to_text():
     print("You are using Text-to-Text(T2T) Model.")
     print("Enter 'Image Mode' to turn to Image/text Model")
     print(ansi(["dim", "bold", "bright_magenta"]), end="")
-    print("─" * (os.get_terminal_size().columns - 1), ansi([]))
+    print("─" * (os.get_terminal_size().columns - 1), ansi(["white"]))
 
     model = initialize_genai()
 
@@ -143,13 +143,13 @@ def text_to_text():
             continue
 
         if query == "Image Mode":
-            print(ansi([]))
+            print(ansi(["white"]))
             response_with_images()
 
         try:
             response = chat.send_message(query, stream=False)
             print(ansi(["green", "bold"]) + "Response: ", ansi(["white"]))
-            print(ansi([]))
+            print(ansi(["white"]))
             print(format_text(response.text) + ansi(["white"]))
 
         except exceptions.DeadlineExceeded as error:
@@ -198,7 +198,7 @@ def text_to_text():
             sys.exit(1)
 
         print(ansi(["bold", "bright_magenta"]) + "─" *
-              (os.get_terminal_size().columns - 2), ansi([]))
+              (os.get_terminal_size().columns - 2), ansi(["white"]))
         # print()
 
 
@@ -209,7 +209,7 @@ def response_with_images():
     print("You are using MultiModel Model.", end = "")
     print("Enter 'Text Mode' to turn to Text-to-Text Model")
     print(ansi(["dim", "bold", "bright_magenta"]), end = "")
-    print("─" *(os.get_terminal_size().columns - 1), ansi([]))
+    print("─" *(os.get_terminal_size().columns - 1), ansi(["white"]))
 
     while True:
         print(ansi(["green", "bold"]) + "The path to the image ", end = "")
@@ -220,7 +220,7 @@ def response_with_images():
         image_file = input()
 
         if image_file == "Text Mode":
-            print(ansi([]))
+            print(ansi(["white"]))
             text_to_text()
 
         if image_file in ("clip", ""):
@@ -240,7 +240,7 @@ def response_with_images():
 
             except PIL.UnidentifiedImageError:
                 print(ansi(["bold", "red"]) + "Cannot identify the image file:", end = " ")
-                print(ansi(["dim", "red"]) + image_file + ansi([]), "\n")
+                print(ansi(["dim", "red"]) + image_file + ansi(["white"]), "\n")
 
                 continue
 
@@ -298,7 +298,7 @@ def response_with_images():
             continue
 
         print("\n", ansi(["bold", "bright_magenta"]) + "─" *
-              (os.get_terminal_size().columns - 1), ansi([]))
+              (os.get_terminal_size().columns - 1), ansi(["white"]))
 
 
 def main():
@@ -310,13 +310,13 @@ def main():
     phrase = "Gemini-AI on Terminal by ALHAM"
     space = (int(size.columns) - len(phrase))/2
 
-    # print(ansi(["dim", "yellow", "bold"]), "-" * (size.columns - 3), ansi([]))
+    # print(ansi(["dim", "yellow", "bold"]), "-" * (size.columns - 3), ansi(["white"]))
     print(ansi(["bold", "bright_red"]) + "`" *
-          os.get_terminal_size().columns, ansi([]), end="")
+          os.get_terminal_size().columns, ansi(["white"]), end="")
     print(" " * int(space) +
-          ansi(["bright_cyan", "bold"]) + phrase + "\n", ansi([]))
+          ansi(["bright_cyan", "bold"]) + phrase + "\n", ansi(["white"]))
     print(ansi(["bold", "bright_red"]) + "`" *
-          os.get_terminal_size().columns, ansi([]))
+          os.get_terminal_size().columns, ansi(["white"]))
 
     if len(sys.argv) > 1:
         if "--image" in sys.argv:
@@ -338,7 +338,7 @@ if __name__ == "__main__":
             "___ See ya! ___" + ansi(["bold", "bright_white"])
 
         print("\n", ansi(["bold", "bright_red"]) + "─" *
-              (os.get_terminal_size().columns - 1), ansi([]))
+              (os.get_terminal_size().columns - 1), ansi(["white"]))
 
         print(f"{string:^{os.get_terminal_size().columns - 6}}")
 
@@ -352,8 +352,8 @@ if __name__ == "__main__":
         print(" " * s + r" /'\_   _/`\  ")
         print(" " * s + r" \___)=(___/  ")
         print("\n", ansi(["bold", "bright_red"]) + "─" *
-              (os.get_terminal_size().columns - 1), ansi([]))
+              (os.get_terminal_size().columns - 1), ansi(["white"]))
 
-        print(ansi([]))
+        print(ansi(["white"]))
 
         sys.exit(0)
