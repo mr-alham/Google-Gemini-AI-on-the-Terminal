@@ -8,6 +8,7 @@ import re
 import sys
 
 import google.generativeai as genai
+from google.api_core import exceptions
 import PIL.Image
 import pyperclip as clipboard
 from colors import ansi
@@ -15,29 +16,31 @@ from colors import ansi
 
 def format_text(text: str) -> str:
     """format the markdown formatted file with ansi codes"""
+
+    # code
+    code_pattern = ''
+
     patterns = {
-        # code
-        r"```(?P<content>.*?)```": [ansi(["black_bg"]), ansi(["white"])],
+        # code snippet
+        r"```(?P<content>.*?)```": [ansi(["bright_cyan"]), ansi(["white"])],
         # bold_italic
         r"\*\*\*(?P<content>.*?)\*\*\*": [ansi(["bold", "italic"]), ansi(["white"])],
         # bold
         r"\*\*(?P<content>.*?)\*\*": [ansi(["bold", "yellow"]), ansi(["white"])],
         # italic
-        r"\*(?P<content>.*?)\*": [ansi(["italic", "cyan"]), ansi(["white"])],
-        # code
-        r"\`(?P<content>.*?)\`": [ansi(["dim", "bright_green"]), ansi(["white"])],
-        # blockquote
-        r"^\>.?(?P<content>.*)": [ansi(["bright_black", "white_bg"]), ansi(["white"])],
+        r"\*(?P<content>.*?)\*": [ansi(["italic",]), ansi(["white"])],  # used to be cyan
         # headings
-        r"^#{1,6}(?P<content>.*)": [ansi(["dim", "bold", "underline", "magenta"]), ansi(["white"])],
-        # headings
-        # r"#{1,6}(?P<content>.*)": [ansi(["red"]), ansi(["reset", "white"])],
-        # blockquote
-        r"^\>(?P<content>.*?)": [ansi(["black"]), ansi(["white_bg", "reset"])],
+        r"^#{1,6}(?P<content>.*)": [ansi(["bold", "underline", "bright_yellow"]), ansi(["white"])],
         # un ordered lists
         r"^\* (?P<content>.*?)": ["\u2022", ""],
         # strikethrough
         r"\~\~(?P<content>.*?)\~\~": [ansi(["strikethrough"]), ansi(["white"])],
+        # blockquote
+        # r"^\>.?(?P<content>.*)": [ansi(["bright_black", "white_bg"]), ansi(["white"])],  # some problem with blockquote
+        # blockquote
+        # r"^\>(?P<content>.*?)": [ansi(["black"]), ansi(["white_bg", "reset"])],
+        # code
+        r"\s\`(?P<content>.*?)\`\s": [" " + ansi(["dim", "bright_green"]), ansi(["white"]) + " "],
     }
 
     other_patterns = {
@@ -124,9 +127,11 @@ def initialize_genai():
 def text_to_text():
     """Input: text  ->  output: text"""
 
-    print(ansi(["dim", "bright_yellow", "bold"]),
-          "You are using Text-to-Text(T2T) Model.\
-            \n Enter 'Image Mode' to turn to Image/text Model", ansi([]))
+    print(ansi(["dim", "bright_yellow", "bold"]))
+    print("You are using Text-to-Text(T2T) Model.")
+    print("Enter 'Image Mode' to turn to Image/text Model")
+    print(ansi(["dim", "bold", "bright_cyan"]), end="")
+    print("─" *(os.get_terminal_size().columns - 1), ansi([]))
 
     model = initialize_genai()
 
@@ -137,6 +142,7 @@ def text_to_text():
 
         if query == "" or query.isspace():
             print(ansi(["dim", "red"]) + "The query is empty.\n")
+
             continue
 
         if query == "Image Mode":
@@ -146,32 +152,74 @@ def text_to_text():
         try:
             response = chat.send_message(query, stream=False)
             print(ansi(["green", "bold"]) + "Response: ", ansi(["white"]))
-            print(format_text(response.text)+ansi([]))
+            print(ansi([]))
+            print(format_text(response.text) + ansi([]))
 
-        except ValueError:
-            print(response.prompt_feedback)
-            print(response.candidates[0].finish_reason)
-            print(response.candidates[0].safety_ratings)
-            print()
+        except exceptions.DeadlineExceeded as error:
+            print(ansi(["bold", "red"]) + "Deadline exceeded (Internet connection could be lost)")
+            print("Or the deadline is shorter:" + ansi(["dim", "red"]))
+            print(error.message, "\n")
 
-        print(ansi(["dim", "bold", "blue"])+"_ " *
-              int(os.get_terminal_size().columns/2))
+            continue
+
+        except exceptions.InvalidArgument as error:
+            print(ansi(["bold", "red"]) + "Request fails API validation, or you tried to access a model that requires" , end = "")
+            print("allowlisting or is disallowed by the organization's policy:" + ansi(["dim", "red"]))
+            print(error.message, "\n")
+
+            sys.exit(1)
+
+        except exceptions.PermissionDenied as error:
+            print(ansi(["bold", "red"]) + "Client doesn't have sufficient permission to call the API:" + ansi(["dim", "red"]))
+            print(error.message, "\n")
+
+            sys.exit(1)
+
+        except exceptions.NotFound as error:
+            print(ansi(["bold", "red"]) + "No valid object is found from the designated URL:" + ansi(["dim", "red"]))
+            print(error.message, "\n")
+
+            sys.exit(1)
+
+        except exceptions.ResourceExhausted as error:
+            print(ansi(["bold", "red"]) + "Depending on the error message, the error could be caused by the following:")
+            print("1. API quota over the limit.\n2. Server overload due to shared server capacity." + ansi(["dim", "red"]))
+            print(error.message, "\n")
+
+            sys.exit(1)
+
+        except exceptions.Unknown as error:
+            print(ansi(["bold", "red"]) + "Server error due to overload or dependency failure:" + ansi(["dim", "red"]))
+            print(error.message, "\n")
+
+            sys.exit(1)
+
+        except exceptions.ServiceUnavailable as error:
+            print(ansi(["bold", "red"]) + "Service is temporarily unavailable:" + ansi(["dim", "red"]))
+            print(error.message, "\n")
+
+            sys.exit(1)
+
+        print(ansi(["bold", "bright_magenta"]) + "─" *
+              (os.get_terminal_size().columns - 2), ansi([]))
+        # print()
 
 
 def response_with_images():
     """Input: text/image  ->  output: text"""
 
-    print(ansi(["dim", "bright_yellow", "bold"]),
-          "You are using MultiModel Model.\
-            \n WEnter 'Text Mode' to turn to Text-to-Text Model", ansi([])
-          )
+    print(ansi(["dim", "bright_yellow", "bold"]), end = "")
+    print("You are using MultiModel Model.", end = "")
+    print("Enter 'Text Mode' to turn to Text-to-Text Model")
+    print(ansi(["dim", "bold", "bright_cyan"]), end = "")
+    print("─" *(os.get_terminal_size().columns - 1), ansi([]))
 
     while True:
-        print(ansi(["green", "bold"]) + "The path to the image " +
-              ansi(["green", "bold", "dim"]) +
-              "(Enter 'clip' or press 'enter' key to copy from the Clipboard): " +
-              ansi(["white"]), end=''
-              )
+        print(ansi(["green", "bold"]) + "The path to the image ", end = "")
+        print(ansi(["green", "bold", "dim"]), end = "")
+        print("(Enter 'clip' or press 'enter' key to copy from the Clipboard): ", end = "")
+        print(ansi(["white"]), end='')
+
         image_file = input()
 
         if image_file == "Text Mode":
@@ -182,25 +230,77 @@ def response_with_images():
             image_file = clipboard.paste()
 
         if os.path.exists(image_file):
-            print(ansi(["green", "bold"]) +
-                  "Prompt: " + ansi(["white"]), end="")
+            print(ansi(["green", "bold"]) + "Prompt: " + ansi(["white"]), end="")
             query = input()
             model = initialize_genai()
 
-            response = model.generate_content(
-                [query, PIL.Image.open(image_file)],
-                stream=False
-            )
+            try:
+                response = model.generate_content(
+                    [query, PIL.Image.open(image_file)],
+                    stream=False, request_options={"timeout": 40})
 
-            print(format_text(response.text), ansi([]))
+                print(format_text(response.text), ansi([]))
+
+            except PIL.UnidentifiedImageError:
+                print(ansi(["bold", "red"]) + "Cannot identify the image file:", end = " ")
+                print(ansi(["dim", "red"]) + image_file + ansi([]), "\n")
+
+                continue
+
+            except exceptions.DeadlineExceeded as error:
+                print(ansi(["bold", "red"]) + "Deadline exceeded (Internet connection could be lost)")
+                print("Or the deadline is shorter:" + ansi(["dim", "red"]))
+                print(error.message, "\n")
+
+                continue
+
+            except exceptions.InvalidArgument as error:
+                print(ansi(["bold", "red"]) + "Request fails API validation, or you tried to access a model that requires ", end = "")
+                print("allowlisting or is disallowed by the organization's policy:" + ansi(["dim", "red"]))
+                print(error.message, "\n")
+
+                sys.exit(1)
+
+            except exceptions.PermissionDenied as error:
+                print(ansi(["bold", "red"]) + "Client doesn't have sufficient permission to call the API:" + ansi(["dim", "red"]))
+                print(error.message, "\n")
+
+                sys.exit(1)
+
+            except exceptions.NotFound as error:
+                print(ansi(["bold", "red"]) + "No valid object is found from the designated URL:" + ansi(["dim", "red"]))
+                print(error.message, "\n")
+
+                sys.exit(1)
+
+            except exceptions.ResourceExhausted as error:
+                print(ansi(["bold", "red"]) + "Depending on the error message, the error could be caused by the following:")
+                print("1. API quota over the limit.\n2. Server overload due to shared server capacity.", end = "")
+                print(ansi(["dim", "red"]), error.message, "\n")
+
+                sys.exit(1)
+
+            except exceptions.Unknown as error:
+                print(ansi(["bold", "red"]) + "Server error due to overload or dependency failure:" + ansi(["dim", "red"]),
+                      error.message, "\n")
+
+                sys.exit(1)
+
+            except exceptions.ServiceUnavailable as error:
+                print(ansi(["bold", "red"]) + "Service is temporarily unavailable:" + ansi(["dim", "red"]),
+                      error.message, "\n")
+
+                sys.exit(1)
 
         else:
-            print(f"{ansi(["bold", "red"])}Error: Not a valid file path:{
-                  ansi(["dim", "bright_red"])}'{image_file}'."
-                  )
-            print("Try again.\n")
+            print(ansi(["bold", "red"]), end = "")
+            print(f"Error: Not a valid file path:{ansi(["dim", "bright_red"])}'{image_file}'.", end = "")
+            print(ansi(["bold", "red"]), "\nTry again.\n")
 
             continue
+
+        print("\n", ansi(["bold", "bright_magenta"]) + "─" *
+              (os.get_terminal_size().columns - 1), ansi([]))
 
 
 def main():
@@ -213,7 +313,12 @@ def main():
     space = (int(size.columns) - len(phrase))/2
 
     # print(ansi(["dim", "yellow", "bold"]), "-" * (size.columns - 3), ansi([]))
-    print(" " * int(space) + ansi(["bright_cyan", "bold"]) + phrase + ansi([]))
+    print(ansi(["bold", "bright_red"]) + "`" *
+          os.get_terminal_size().columns, ansi([]), end="")
+    print(" " * int(space) +
+          ansi(["bright_cyan", "bold"]) + phrase + "\n", ansi([]))
+    print(ansi(["bold", "bright_red"]) + "`" *
+          os.get_terminal_size().columns, ansi([]))
 
     if len(sys.argv) > 1:
         if "--image" in sys.argv:
@@ -234,6 +339,9 @@ if __name__ == "__main__":
         string = ansi(["bold", "bright_red"]) + \
             "___ See ya! ___" + ansi(["bold", "bright_white"])
 
+        print("\n", ansi(["bold", "bright_red"]) + "─" *
+              (os.get_terminal_size().columns - 1), ansi([]))
+
         print(f"{string:^{os.get_terminal_size().columns - 6}}")
 
         s = int((os.get_terminal_size().columns/2) - 12)
@@ -245,6 +353,8 @@ if __name__ == "__main__":
         print(" " * s + r"  (|     | )  ")
         print(" " * s + r" /'\_   _/`\  ")
         print(" " * s + r" \___)=(___/  ")
+        print("\n", ansi(["bold", "bright_red"]) + "─" *
+              (os.get_terminal_size().columns - 1), ansi([]))
 
         print(ansi([]))
 
