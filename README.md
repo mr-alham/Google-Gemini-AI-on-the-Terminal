@@ -72,7 +72,7 @@ pip install -r requirements.txt
   python3 main.py
   ```
 
-  **Command Line Arguments**
+  **Command-Line Arguments**
   - `--image` : will start the script in MultiModel mode where you can give a file path and give the prompt.
 
 

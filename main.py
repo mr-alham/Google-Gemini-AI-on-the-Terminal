@@ -8,17 +8,14 @@ import re
 import sys
 
 import google.generativeai as genai
-from google.api_core import exceptions
 import PIL.Image
 import pyperclip as clipboard
 from colors import ansi
+from google.api_core import exceptions
 
 
 def format_text(text: str) -> str:
     """format the markdown formatted file with ansi codes"""
-
-    # code
-    code_pattern = ''
 
     patterns = {
         # code snippet
@@ -130,8 +127,8 @@ def text_to_text():
     print(ansi(["dim", "bright_yellow", "bold"]))
     print("You are using Text-to-Text(T2T) Model.")
     print("Enter 'Image Mode' to turn to Image/text Model")
-    print(ansi(["dim", "bold", "bright_cyan"]), end="")
-    print("─" *(os.get_terminal_size().columns - 1), ansi([]))
+    print(ansi(["dim", "bold", "bright_magenta"]), end="")
+    print("─" * (os.get_terminal_size().columns - 1), ansi([]))
 
     model = initialize_genai()
 
@@ -153,7 +150,7 @@ def text_to_text():
             response = chat.send_message(query, stream=False)
             print(ansi(["green", "bold"]) + "Response: ", ansi(["white"]))
             print(ansi([]))
-            print(format_text(response.text) + ansi([]))
+            print(format_text(response.text) + ansi(["white"]))
 
         except exceptions.DeadlineExceeded as error:
             print(ansi(["bold", "red"]) + "Deadline exceeded (Internet connection could be lost)")
@@ -211,7 +208,7 @@ def response_with_images():
     print(ansi(["dim", "bright_yellow", "bold"]), end = "")
     print("You are using MultiModel Model.", end = "")
     print("Enter 'Text Mode' to turn to Text-to-Text Model")
-    print(ansi(["dim", "bold", "bright_cyan"]), end = "")
+    print(ansi(["dim", "bold", "bright_magenta"]), end = "")
     print("─" *(os.get_terminal_size().columns - 1), ansi([]))
 
     while True:
@@ -239,7 +236,7 @@ def response_with_images():
                     [query, PIL.Image.open(image_file)],
                     stream=False, request_options={"timeout": 40})
 
-                print(format_text(response.text), ansi([]))
+                print(format_text(response.text), ansi(["white"]))
 
             except PIL.UnidentifiedImageError:
                 print(ansi(["bold", "red"]) + "Cannot identify the image file:", end = " ")
@@ -294,7 +291,8 @@ def response_with_images():
 
         else:
             print(ansi(["bold", "red"]), end = "")
-            print(f"Error: Not a valid file path:{ansi(["dim", "bright_red"])}'{image_file}'.", end = "")
+            print("Error: Not a valid file path:")
+            print(f"{ansi(["dim", "bright_red"])}'{image_file}'.", end = "")
             print(ansi(["bold", "red"]), "\nTry again.\n")
 
             continue
