@@ -12,24 +12,24 @@ Engage with Google's Gemini AI directly from your terminal with vibrant colored 
 ## Prerequisites
 ### API Key
   - To use the Gemini API, you need an API key. You can easily create a key with one click on Google AI Studio. To read the documentaion visit [ai.google.dev](https://ai.google.dev/gemini-api/docs).
-  
+
   - To get the API key visit [Google AI Studio](https://makersuite.google.com/app/apikey)
-  
+
 ### Softwares
 - Pyhon 3.x
 - Pip
-  
+
 ### Dependencies
   - `google-generativeai` Enables developers to use Google's state-of-the-art generative AI models to build AI-powered features and applications.
      ```bash
      pip install google-generativeai
      ```
-     
+
   - `pillow` Library gives image processing capabilities.
     ```bash
     pip install pillow
     ```
-    
+
   - `pyperclip` Is a cross-platform Python module to interact with clipboard
     ```bash
     pip install pyperclip
@@ -52,18 +52,20 @@ pip install -r requirements.txt
     ```
   - Replace "your gemini key here" with the API key you obtained in above step, Be sure to keep the quotation marks around your key.
   - Save the key.json file.
- 
+
+
 - **Gemini Model** *not required
-  
+
   - The Gemini API offers different models that are optimized for specific use cases.
   - Read the [documentation](https://ai.google.dev/gemini-api/docs/models/gemini) and select your preferred one.
   - The Default model is `gemini-1.5-pro-latest`
+
 
 - **Safety Settings & Generation Configuration** *not required
   - Read the documentaion and edit at your will
   - [Model Parameters Documentaion](https://ai.google.dev/api/python/google/generativeai/GenerativeModel)
   - [Safety Settings Documentaion](https://ai.google.dev/api/python/google/ai/generativelanguage/SafetyRating)
- 
+
 ## Usage
   Run the script using Python
   ```python
@@ -72,7 +74,7 @@ pip install -r requirements.txt
 
   **Command Line Arguments**
   - `--image` : will start the script in MultiModel mode where you can give a file path and give the prompt.
-    
+
 
   **Text-to-Text(T2T) Model**
    - If the script didn't get any arguments the script will start with Text-to-Text Model.
