@@ -1,6 +1,6 @@
 # Google Gemini-AI Chat Interface on Terminal
 
-![Text-to-Text Example Screenshot](https://imgur.com/Gu1wsO5)
+![Text-to-Text](https://imgur.com/Gu1wsO5 "Text-to-Text")
 
 Engage with Google's Gemini AI directly from your terminal with vibrant colored outputs. Seamlessly switch between text queries and interactive image inputs for a dynamic AI interaction experience. Perfect for Linux Enthusiasts, developers and AI enthusiasts alike!
 
