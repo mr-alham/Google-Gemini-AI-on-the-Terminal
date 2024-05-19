@@ -27,7 +27,7 @@ def format_text(text: str) -> str:
         # italic
         r"\*(?P<content>.*?)\*": [ansi(["italic",]), ansi(["white"])],  # used to be cyan
         # headings
-        r"^#{1,6}(?P<content>.*)": [ansi(["bold", "underline", "bright_yellow"]), ansi(["white"])],
+        r"^#{1,6}(?P<content>.*)": [ansi(["bold", "underline", "magenta"]) + "#", ansi(["white"])],
         # un ordered lists
         r"^\* (?P<content>.*?)": ["\u2022", ""],
         # strikethrough
