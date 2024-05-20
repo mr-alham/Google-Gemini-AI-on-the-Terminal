@@ -12,6 +12,8 @@ Engage with Google's Gemini AI directly from your terminal with vibrant colored 
   - **Dynamic Interactions**  - Seamless switching between text and Image modes for versitile interactions.
   - **Configuration**  - Easily configure settings through 'keys.json' file including API key.
 
+  * As part of my `Go` learning journey, I've decided to recreate this project using `Go`. This serves as a practical exercise to enhance my skills and gain hands-on experience. Expect that on near future on my [Github profile](https://github.com/mr-alham)
+
 ## Prerequisites
 ### API Key
   - To use the Gemini API, you need an API key. You can easily create a key with one click on Google AI Studio. To read the documentaion visit [ai.google.dev](https://ai.google.dev/gemini-api/docs).
@@ -98,4 +100,4 @@ pip install -r requirements.txt
   Feel free to contribute by submitting pull requests.
 
 
-
+  ---
