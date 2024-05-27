@@ -82,14 +82,18 @@ pip install -r requirements.txt
 
 
   **Text-to-Text(T2T) Model**
-   - If the script didn't get any arguments the script will start with Text-to-Text Model.
-   - Using Text-to-Text Model user can develop a conversation with the Gemini.
-   - If you need to switch to MultiModel type `Image Mode`
+  - If the script didn't get any arguments the script will start with Text-to-Text Model.
+  - Using Text-to-Text Model user can develop a conversation with the Gemini.
+  - If you need to switch to MultiModel type `Image Mode`
 
   **MultiMode Model**
-   - If the script recieved the argument `--image` then the script will start in MultiMode mode.
-   - Or if the query is equla to `Image Mode` on T2T It will redirect to MuliModel.
-   - If need to switch to normal mode type `Text Mode` as the file path.
+  - If the script recieved the argument `--image` then the script will start in MultiMode mode.
+  - Or if the query is equla to `Image Mode` on T2T It will redirect to MuliModel.
+  - You can give the path to the image file by,
+    - Manually entering the path to Image
+    - Copying the path to the clipboard and giving input as `clip`
+    - Or copy the path and press `Enter` key
+  - If need to switch to normal mode type `Text Mode` as the file path.
 
 ## License
   This project is licensed under the MIT License.
