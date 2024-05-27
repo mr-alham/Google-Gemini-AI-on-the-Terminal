@@ -6,6 +6,7 @@ import json
 import os
 import re
 import sys
+import readline
 
 import google.generativeai as genai
 import PIL.Image
